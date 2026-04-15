@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESKCRAFT - Minimal Desk Setup Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-white text-stone-900 font-sans">
+
+    
+    <nav class="bg-white border-b border-stone-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <a href="index.html" class="text-xl font-bold tracking-wider text-stone-900">DESKCRAFT</a>
+
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-sm font-medium text-stone-900 active">Home</a>
+                    <a href="products.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Products</a>
+                    <a href="about.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">About</a>
+                    <a href="contact.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Contact</a>
+                </div>
+
+                
+                <div class="flex items-center space-x-4">
+                    <a href="login.html" class="text-stone-500 hover:text-stone-900">
+                        <i class="fa-regular fa-user"></i>
+                    </a>
+                    <a href="cart.html" class="relative text-stone-500 hover:text-stone-900">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span class="cart-count hidden absolute -top-2 -right-2 bg-amber-700 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                    </a>
+                    
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-stone-500 hover:text-stone-900">
+                        <i class="fa-solid fa-bars fa-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="menu-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6">
+            <button onclick="toggleMobileMenu()" class="mb-8 text-stone-500 hover:text-stone-900">
+                <i class="fa-solid fa-xmark fa-lg"></i>
+            </button>
+            <div class="flex flex-col space-y-4">
+                <a href="index.html" class="text-sm font-medium text-stone-900">Home</a>
+                <a href="products.html" class="text-sm font-medium text-stone-500 hover:text-stone-900">Products</a>
+                <a href="about.html" class="text-sm font-medium text-stone-500 hover:text-stone-900">About</a>
+                <a href="contact.html" class="text-sm font-medium text-stone-500 hover:text-stone-900">Contact</a>
+                <hr class="border-stone-200">
+                <a href="login.html" class="text-sm font-medium text-stone-500 hover:text-stone-900">Login</a>
+                <a href="signup.html" class="text-sm font-medium text-stone-500 hover:text-stone-900">Sign Up</a>
+                <a href="cart.html" class="text-sm font-medium text-stone-500 hover:text-stone-900">Cart</a>
+                <a href="orders.html" class="text-sm font-medium text-stone-500 hover:text-stone-900">My Orders</a>
+            </div>
+        </div>
+    </nav>
+
+
+    
+    <!-- Assignment 2 visibility banner -->
+    <a href="admin/login.html" class="block bg-amber-700 hover:bg-amber-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center text-sm text-white">
+            <span class="inline-flex items-center gap-2 font-semibold tracking-wider uppercase text-xs"><i class="fa-solid fa-user-shield"></i> Assignment 2 &mdash; Admin Panel</span>
+            <span class="hidden sm:inline text-amber-200">&middot;</span>
+            <span class="text-amber-50">Click here to log in &mdash; credentials: <span class="font-mono bg-amber-900/40 px-2 py-0.5 rounded">admin</span> / <span class="font-mono bg-amber-900/40 px-2 py-0.5 rounded">admin123</span></span>
+            <i class="fa-solid fa-arrow-right ml-1"></i>
+        </div>
+    </a>
+
+    <section class="bg-stone-50 fade-in">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                
+                <div>
+                    <p class="text-sm font-medium tracking-widest text-amber-700 uppercase mb-4">Minimal Desk Essentials</p>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-stone-900 leading-tight mb-6">
+                        Elevate Your Workspace
+                    </h1>
+                    <p class="text-lg text-stone-500 leading-relaxed mb-10 max-w-lg">
+                        Clean desk accessories that actually look good. No clutter, no mess - just the essentials you need for a setup you'll love.
+                    </p>
+                    <a href="products.html" class="inline-block bg-stone-900 text-white text-sm font-medium tracking-wider px-8 py-4 rounded hover:bg-stone-800 transition-colors">
+                        Shop Collection
+                    </a>
+                </div>
+                
+                <img src="images/minimal-desk-setup.png" alt="Minimal desk setup" class="h-96 w-full object-cover rounded-lg">
+            </div>
+        </div>
+    </section>
+
+
+    
+    <section class="fade-in">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+            <div class="text-center mb-14">
+                <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4">Shop by Category</h2>
+                <p class="text-stone-500 max-w-xl mx-auto">Browse our categories and find what fits your setup.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <a href="products.html?category=organization" class="group relative block rounded-lg overflow-hidden hover-lift">
+                    <img src="images/desk-organizer-minimal.jpg" alt="Desk Organization" class="h-64 w-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-stone-900/70 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h3 class="text-white text-lg font-semibold">Desk Organization</h3>
+                        <p class="text-stone-300 text-sm mt-1 group-hover:text-white transition-colors">Keep it tidy</p>
+                    </div>
+                </a>
+                
+                <a href="products.html?category=lighting" class="group relative block rounded-lg overflow-hidden hover-lift">
+                    <img src="images/desk-lamp-minimal.jpg" alt="Lighting" class="h-64 w-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-stone-900/70 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h3 class="text-white text-lg font-semibold">Lighting</h3>
+                        <p class="text-stone-300 text-sm mt-1 group-hover:text-white transition-colors">Set the mood</p>
+                    </div>
+                </a>
+                
+                <a href="products.html?category=peripherals" class="group relative block rounded-lg overflow-hidden hover-lift">
+                    <img src="images/white-keyboard-desk.jpg" alt="Peripherals" class="h-64 w-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-stone-900/70 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h3 class="text-white text-lg font-semibold">Peripherals</h3>
+                        <p class="text-stone-300 text-sm mt-1 group-hover:text-white transition-colors">Work smarter</p>
+                    </div>
+                </a>
+                
+                <a href="products.html?category=accessories" class="group relative block rounded-lg overflow-hidden hover-lift">
+                    <img src="images/desk-accessories-minimal.jpg" alt="Accessories" class="h-64 w-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-stone-900/70 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h3 class="text-white text-lg font-semibold">Accessories</h3>
+                        <p class="text-stone-300 text-sm mt-1 group-hover:text-white transition-colors">Finishing touches</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    
+    <section class="bg-stone-50 fade-in">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+            <div class="flex items-center justify-between mb-14">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-2">Featured Products</h2>
+                    <p class="text-stone-500">Our most popular products right now.</p>
+                </div>
+                <a href="products.html" class="hidden sm:inline-block text-sm font-medium text-stone-900 border border-stone-300 px-6 py-2.5 rounded hover:bg-stone-900 hover:text-white transition-colors">
+                    View All
+                </a>
+            </div>
+            
+            <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+            </div>
+            <div class="text-center mt-10 sm:hidden">
+                <a href="products.html" class="inline-block text-sm font-medium text-stone-900 border border-stone-300 px-6 py-2.5 rounded hover:bg-stone-900 hover:text-white transition-colors">
+                    View All Products
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    
+    <section class="fade-in">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+            <div class="text-center mb-14">
+                <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4">Why Choose DESKCRAFT</h2>
+                <p class="text-stone-500 max-w-xl mx-auto">Here's what makes us different from other stores.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-stone-100 mb-6">
+                        <i class="fa-solid fa-gem fa-lg text-stone-700"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-stone-900 mb-3">Quality Materials</h3>
+                    <p class="text-stone-500 text-sm leading-relaxed max-w-xs mx-auto">We pick products made from real wood, metal, and leather - not cheap plastic that falls apart.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-stone-100 mb-6">
+                        <i class="fa-solid fa-truck-fast fa-lg text-stone-700"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-stone-900 mb-3">Free Shipping</h3>
+                    <p class="text-stone-500 text-sm leading-relaxed max-w-xs mx-auto">Orders over Rs. 5,000 ship free across Pakistan. Most orders arrive within 3-5 days.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-stone-100 mb-6">
+                        <i class="fa-solid fa-rotate-left fa-lg text-stone-700"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-stone-900 mb-3">Easy Returns</h3>
+                    <p class="text-stone-500 text-sm leading-relaxed max-w-xs mx-auto">Don't like it? Send it back within 30 days and we'll give you a full refund.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    
+    <section class="bg-stone-900 fade-in">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Join Our Community</h2>
+                <p class="text-stone-400 mb-10">Get notified when we add new products and drop exclusive deals.</p>
+                <form onsubmit="return false;" class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                    <input
+                        type="email"
+                        placeholder="Enter your email"
+                        class="flex-1 px-5 py-3.5 rounded bg-stone-800 text-white placeholder-stone-500 border border-stone-700 focus:outline-none focus:border-amber-700 text-sm"
+                    >
+                    <button
+                        type="submit"
+                        class="px-8 py-3.5 bg-amber-700 text-white text-sm font-medium rounded hover:bg-amber-800 transition-colors tracking-wider"
+                    >
+                        Subscribe
+                    </button>
+                </form>
+                <p class="text-stone-600 text-xs mt-4">No spam, ever. Unsubscribe anytime.</p>
+            </div>
+        </div>
+    </section>
+
+
+    
+    <section class="py-12 text-center">
+        <p class="text-sm text-stone-400 tracking-wide">Designed & Built by</p>
+        <h3 class="text-2xl md:text-3xl font-bold mt-2">
+            <span style="background: linear-gradient(135deg, #c8a97e, #1a1a1a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Haashir Azhar</span>
+        </h3>
+    </section>
+
+    
+    <footer class="bg-stone-900 text-stone-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                
+                <div>
+                    <h3 class="text-white text-lg font-bold tracking-wider mb-4">DESKCRAFT</h3>
+                    <p class="text-sm text-stone-400">Clean desk gear for people who care about their setup.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-sm font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-white">Home</a></li>
+                        <li><a href="products.html" class="hover:text-white">Products</a></li>
+                        <li><a href="about.html" class="hover:text-white">About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-sm font-semibold mb-4">Account</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="login.html" class="hover:text-white">Login</a></li>
+                        <li><a href="signup.html" class="hover:text-white">Sign Up</a></li>
+                        <li><a href="cart.html" class="hover:text-white">Cart</a></li>
+                        <li><a href="orders.html" class="hover:text-white">My Orders</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-sm font-semibold mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="hover:text-white"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="hover:text-white"><i class="fa-brands fa-facebook-f"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-stone-800 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-stone-500">
+                <p>&copy; 2026 DESKCRAFT. All rights reserved. | SAP ID: 70145442</p>
+                <a href="admin/login.html" class="text-stone-500 hover:text-white text-xs tracking-widest uppercase"><i class="fa-solid fa-lock mr-1"></i>Admin Panel</a>
+            </div>
+        </div>
+    </footer>
+
+
+    
+    <script src="js/main.js"></script>
+    <script>
+        // Render Featured Products (IDs: 1, 3, 6, 11)
+        document.addEventListener('DOMContentLoaded', function() {
+            const featuredIds = [1, 3, 5, 7];
+            const container = document.getElementById('featured-products');
+
+            // Check if products array exists in main.js
+            if (typeof products !== 'undefined') {
+                const featuredProducts = products.filter(function(product) {
+                    return featuredIds.includes(product.id);
+                });
+
+                featuredProducts.forEach(function(product) {
+                    // Build star rating HTML
+                    let starsHTML = '';
+                    const fullStars = Math.floor(product.rating);
+                    const hasHalf = product.rating % 1 >= 0.5;
+
+                    for (let i = 0; i < fullStars; i++) {
+                        starsHTML += '<i class="fa-solid fa-star text-amber-500 text-sm"></i>';
+                    }
+                    if (hasHalf) {
+                        starsHTML += '<i class="fa-solid fa-star text-amber-500 text-sm"></i>';
+                    }
+                    const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+                    for (let i = 0; i < emptyStars; i++) {
+                        starsHTML += '<i class="fa-regular fa-star text-stone-300 text-sm"></i>';
+                    }
+
+                    // Create product card
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-lg overflow-hidden hover-lift';
+                    card.innerHTML =
+                        '<a href="product-detail.html?id=' + product.id + '" class="block">' +
+                            '<img src="' + product.image + '" alt="' + product.name + '" class="h-56 w-full object-cover">' +
+                        '</a>' +
+                        '<div class="p-5">' +
+                            '<a href="product-detail.html?id=' + product.id + '" class="block">' +
+                                '<h3 class="text-sm font-semibold text-stone-900 mb-1">' + product.name + '</h3>' +
+                            '</a>' +
+                            '<div class="flex items-center gap-1 mb-3">' +
+                                starsHTML +
+                                '<span class="text-xs text-stone-400 ml-1">(' + product.rating + ')</span>' +
+                            '</div>' +
+                            '<div class="flex items-center justify-between">' +
+                                '<span class="text-lg font-bold text-stone-900">Rs. ' + product.price.toLocaleString() + '</span>' +
+                                '<button onclick="addToCart(' + product.id + ')" class="text-xs font-medium bg-stone-900 text-white px-4 py-2 rounded hover:bg-stone-800 transition-colors">' +
+                                    'Add to Cart' +
+                                '</button>' +
+                            '</div>' +
+                        '</div>';
+
+                    container.appendChild(card);
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - DESKCRAFT Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="bg-stone-50 flex min-h-screen">
+
+    <div id="admin-sidebar-mount"></div>
+    <div class="flex-1 flex flex-col min-h-screen">
+        <div id="admin-topbar-mount"></div>
+
+        <main class="flex-1 p-4 sm:p-8">
+
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-stone-900">Orders</h2>
+                <p class="text-sm text-stone-500">View and manage all customer orders.</p>
+            </div>
+
+            <div class="bg-white rounded-xl border border-stone-100 p-4 mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <input id="search" type="text" placeholder="Search order ID or customer..." class="form-input border border-stone-200 rounded-lg px-4 py-2.5 text-sm" oninput="renderOrders()">
+                <select id="status-filter" class="form-input border border-stone-200 rounded-lg px-4 py-2.5 text-sm bg-white" onchange="renderOrders()">
+                    <option value="all">All statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <select id="sort" class="form-input border border-stone-200 rounded-lg px-4 py-2.5 text-sm bg-white" onchange="renderOrders()">
+                    <option value="date-desc">Newest first</option>
+                    <option value="date-asc">Oldest first</option>
+                    <option value="total-desc">Highest total</option>
+                    <option value="total-asc">Lowest total</option>
+                </select>
+            </div>
+
+            <div class="bg-white rounded-xl border border-stone-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th class="text-right pr-6">View</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="modal-root"></div>
+
+    <script src="../js/main.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        requireAdmin();
+        renderAdminLayout('orders', 'Order Management');
+
+        var STATUSES = ['Pending', 'Processing', 'Shipped', 'In Transit', 'Delivered', 'Cancelled'];
+
+        function statusBadge(status) {
+            var cls = 'bg-stone-50 text-stone-700 border-stone-200';
+            if (status === 'Delivered') cls = 'bg-green-50 text-green-700 border-green-200';
+            else if (status === 'In Transit' || status === 'Shipped') cls = 'bg-blue-50 text-blue-700 border-blue-200';
+            else if (status === 'Processing') cls = 'bg-amber-50 text-amber-700 border-amber-200';
+            else if (status === 'Cancelled') cls = 'bg-red-50 text-red-700 border-red-200';
+            return '<span class="text-xs font-medium px-2.5 py-1 rounded-full border ' + cls + '">' + esc(status) + '</span>';
+        }
+
+        function renderOrders() {
+            var body = document.getElementById('orders-body');
+            var q = (document.getElementById('search').value || '').toLowerCase();
+            var statusFilter = document.getElementById('status-filter').value;
+            var sort = document.getElementById('sort').value;
+
+            var list = getOrders().filter(function (o) {
+                var matchSearch = !q || o.id.toLowerCase().indexOf(q) !== -1 || (o.customer && o.customer.name.toLowerCase().indexOf(q) !== -1);
+                var matchStatus = statusFilter === 'all' || o.status === statusFilter;
+                return matchSearch && matchStatus;
+            });
+
+            list.sort(function (a, b) {
+                if (sort === 'date-desc') return a.date < b.date ? 1 : -1;
+                if (sort === 'date-asc')  return a.date > b.date ? 1 : -1;
+                if (sort === 'total-desc') return b.total - a.total;
+                if (sort === 'total-asc')  return a.total - b.total;
+                return 0;
+            });
+
+            if (!list.length) { body.innerHTML = '<tr><td colspan="7" class="text-center text-stone-400 py-8">No orders found.</td></tr>'; return; }
+
+            var html = '';
+            for (var i = 0; i < list.length; i++) {
+                var o = list[i];
+                var itemCount = 0; for (var k = 0; k < o.items.length; k++) itemCount += o.items[k].quantity;
+                var statusOpts = '';
+                for (var s = 0; s < STATUSES.length; s++) {
+                    statusOpts += '<option value="' + STATUSES[s] + '"' + (STATUSES[s] === o.status ? ' selected' : '') + '>' + STATUSES[s] + '</option>';
+                }
+                html +=
+                    '<tr>' +
+                    '  <td class="font-semibold">' + esc(o.id) + '</td>' +
+                    '  <td><p class="font-medium">' + esc(o.customer.name) + '</p><p class="text-xs text-stone-400">' + esc(o.customer.email) + '</p></td>' +
+                    '  <td class="text-stone-500">' + esc(o.date) + '</td>' +
+                    '  <td>' + itemCount + '</td>' +
+                    '  <td class="font-semibold">' + fmtPrice(o.total) + '</td>' +
+                    '  <td><select onchange="updateStatus(\'' + esc(o.id) + '\', this.value)" class="form-input border border-stone-200 rounded-lg px-2 py-1.5 text-xs bg-white">' + statusOpts + '</select></td>' +
+                    '  <td class="text-right pr-6"><button onclick="viewOrder(\'' + esc(o.id) + '\')" class="text-stone-600 hover:text-stone-900"><i class="fa-solid fa-eye"></i></button></td>' +
+                    '</tr>';
+            }
+            body.innerHTML = html;
+        }
+
+        function updateStatus(orderId, newStatus) {
+            var orders = getOrders();
+            var o = orders.find(function (x) { return x.id === orderId; });
+            if (!o) return;
+            o.status = newStatus;
+            saveOrders(orders);
+            showToast('Status updated to ' + newStatus);
+        }
+
+        function viewOrder(orderId) {
+            var o = getOrders().find(function (x) { return x.id === orderId; });
+            if (!o) return;
+            var itemsHtml = '';
+            for (var i = 0; i < o.items.length; i++) {
+                itemsHtml += '<div class="flex justify-between py-2 text-sm border-b border-stone-100"><span>' + esc(o.items[i].name) + ' &times;' + o.items[i].quantity + '</span><span class="font-medium">' + fmtPrice(o.items[i].price * o.items[i].quantity) + '</span></div>';
+            }
+            document.getElementById('modal-root').innerHTML =
+                '<div class="modal-backdrop" onclick="if(event.target===this)closeModal()">' +
+                '  <div class="modal-card p-6">' +
+                '    <div class="flex items-center justify-between mb-4"><h3 class="text-lg font-semibold">' + esc(o.id) + '</h3><button onclick="closeModal()" class="text-stone-400 hover:text-stone-700"><i class="fa-solid fa-xmark"></i></button></div>' +
+                '    <div class="mb-4"><p class="text-xs uppercase tracking-wider text-stone-400 mb-1">Customer</p>' +
+                '      <p class="font-medium">' + esc(o.customer.name) + '</p>' +
+                '      <p class="text-sm text-stone-500">' + esc(o.customer.email) + ' &middot; ' + esc(o.customer.phone) + '</p>' +
+                '      <p class="text-sm text-stone-500">' + esc(o.customer.address) + ', ' + esc(o.customer.city) + '</p>' +
+                '    </div>' +
+                '    <div class="mb-4"><p class="text-xs uppercase tracking-wider text-stone-400 mb-2">Items</p>' + itemsHtml + '</div>' +
+                '    <div class="flex justify-between text-base font-semibold border-t border-stone-200 pt-3 mb-4"><span>Total</span><span>' + fmtPrice(o.total) + '</span></div>' +
+                '    <div class="flex justify-between items-center"><span class="text-sm text-stone-500">Status</span>' + statusBadge(o.status) + '</div>' +
+                '    <div class="flex justify-end pt-5"><button onclick="closeModal()" class="bg-stone-900 text-white px-5 py-2 rounded-lg text-sm font-medium">Close</button></div>' +
+                '  </div>' +
+                '</div>';
+        }
+
+        function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
+
+        renderOrders();
+    </script>
+</body>
+</html>

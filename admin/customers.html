@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers - DESKCRAFT Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="bg-stone-50 flex min-h-screen">
+
+    <div id="admin-sidebar-mount"></div>
+    <div class="flex-1 flex flex-col min-h-screen">
+        <div id="admin-topbar-mount"></div>
+
+        <main class="flex-1 p-4 sm:p-8">
+
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-stone-900">Customers</h2>
+                <p class="text-sm text-stone-500">All registered users and their contact details.</p>
+            </div>
+
+            <div class="bg-white rounded-xl border border-stone-100 p-4 mb-4">
+                <input id="search" type="text" placeholder="Search by name, email, or city..." class="form-input w-full border border-stone-200 rounded-lg px-4 py-2.5 text-sm" oninput="renderList()">
+            </div>
+
+            <div class="bg-white rounded-xl border border-stone-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="admin-table">
+                        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>Joined</th><th>Orders</th></tr></thead>
+                        <tbody id="cust-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="modal-root"></div>
+
+    <script src="../js/main.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        requireAdmin();
+        renderAdminLayout('customers', 'Customer Management');
+
+        function orderCountForEmail(email) {
+            return getOrders().filter(function (o) { return o.customer && o.customer.email && o.customer.email.toLowerCase() === email.toLowerCase(); }).length;
+        }
+
+        function renderList() {
+            var body = document.getElementById('cust-body');
+            var q = (document.getElementById('search').value || '').toLowerCase();
+            var users = getUsers().filter(function (u) {
+                if (!q) return true;
+                return u.fullname.toLowerCase().indexOf(q) !== -1 || u.email.toLowerCase().indexOf(q) !== -1 || (u.city || '').toLowerCase().indexOf(q) !== -1;
+            });
+
+            if (!users.length) { body.innerHTML = '<tr><td colspan="6" class="text-center text-stone-400 py-8">No customers found.</td></tr>'; return; }
+
+            var html = '';
+            for (var i = 0; i < users.length; i++) {
+                var u = users[i];
+                html +=
+                    '<tr class="cursor-pointer" onclick="viewCustomer(' + u.id + ')">' +
+                    '  <td class="font-medium">' + esc(u.fullname) + '</td>' +
+                    '  <td class="text-stone-500">' + esc(u.email) + '</td>' +
+                    '  <td class="text-stone-500">' + esc(u.phone || '-') + '</td>' +
+                    '  <td class="text-stone-500">' + esc(u.city || '-') + '</td>' +
+                    '  <td class="text-stone-500">' + esc(u.createdAt || '-') + '</td>' +
+                    '  <td>' + orderCountForEmail(u.email) + '</td>' +
+                    '</tr>';
+            }
+            body.innerHTML = html;
+        }
+
+        function viewCustomer(id) {
+            var u = getUsers().find(function (x) { return x.id === id; });
+            if (!u) return;
+            var userOrders = getOrders().filter(function (o) { return o.customer && o.customer.email && o.customer.email.toLowerCase() === u.email.toLowerCase(); });
+            var totalSpent = 0; for (var i = 0; i < userOrders.length; i++) totalSpent += userOrders[i].total;
+            var ordersHtml = userOrders.length
+                ? userOrders.map(function (o) { return '<div class="flex justify-between text-sm py-1.5 border-b border-stone-100"><span class="text-stone-600">' + esc(o.id) + ' &middot; ' + esc(o.date) + '</span><span class="font-medium">' + fmtPrice(o.total) + '</span></div>'; }).join('')
+                : '<p class="text-sm text-stone-400">No orders yet.</p>';
+
+            document.getElementById('modal-root').innerHTML =
+                '<div class="modal-backdrop" onclick="if(event.target===this)closeModal()">' +
+                '  <div class="modal-card p-6">' +
+                '    <div class="flex items-center justify-between mb-4"><h3 class="text-lg font-semibold">' + esc(u.fullname) + '</h3><button onclick="closeModal()" class="text-stone-400 hover:text-stone-700"><i class="fa-solid fa-xmark"></i></button></div>' +
+                '    <div class="grid grid-cols-2 gap-3 mb-4 text-sm">' +
+                '      <div><p class="text-xs uppercase tracking-wider text-stone-400">Email</p><p>' + esc(u.email) + '</p></div>' +
+                '      <div><p class="text-xs uppercase tracking-wider text-stone-400">Phone</p><p>' + esc(u.phone || '-') + '</p></div>' +
+                '      <div><p class="text-xs uppercase tracking-wider text-stone-400">City</p><p>' + esc(u.city || '-') + '</p></div>' +
+                '      <div><p class="text-xs uppercase tracking-wider text-stone-400">Gender</p><p class="capitalize">' + esc(u.gender || '-') + '</p></div>' +
+                '      <div class="col-span-2"><p class="text-xs uppercase tracking-wider text-stone-400">Address</p><p>' + esc(u.address || '-') + '</p></div>' +
+                '    </div>' +
+                '    <div class="border-t border-stone-100 pt-4 mb-4"><p class="text-xs uppercase tracking-wider text-stone-400 mb-2">Orders (' + userOrders.length + ' &middot; Total ' + fmtPrice(totalSpent) + ')</p>' + ordersHtml + '</div>' +
+                '    <div class="flex justify-end"><button onclick="closeModal()" class="bg-stone-900 text-white px-5 py-2 rounded-lg text-sm font-medium">Close</button></div>' +
+                '  </div>' +
+                '</div>';
+        }
+        function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
+
+        renderList();
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - DESKCRAFT Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="bg-stone-50 flex min-h-screen">
+
+    <div id="admin-sidebar-mount"></div>
+    <div class="flex-1 flex flex-col min-h-screen">
+        <div id="admin-topbar-mount"></div>
+
+        <main class="flex-1 p-4 sm:p-8">
+
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-stone-900">Profile</h2>
+                <p class="text-sm text-stone-500">Update your admin account details.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl">
+
+                <div class="bg-white rounded-xl border border-stone-100 p-6">
+                    <h3 class="text-base font-semibold text-stone-900 mb-4">Account Info</h3>
+                    <form onsubmit="saveInfo(event)" novalidate class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Name</label>
+                            <input id="a-name" class="form-input w-full border border-stone-200 rounded-lg px-4 py-2.5 text-sm">
+                            <div id="a-name-error" class="error-message"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Email</label>
+                            <input id="a-email" type="email" class="form-input w-full border border-stone-200 rounded-lg px-4 py-2.5 text-sm">
+                            <div id="a-email-error" class="error-message"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Username</label>
+                            <input id="a-username" class="form-input w-full border border-stone-200 rounded-lg px-4 py-2.5 text-sm">
+                            <div id="a-username-error" class="error-message"></div>
+                        </div>
+                        <button type="submit" class="bg-stone-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-stone-800">Save Info</button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-xl border border-stone-100 p-6">
+                    <h3 class="text-base font-semibold text-stone-900 mb-4">Change Password</h3>
+                    <form onsubmit="changePassword(event)" novalidate class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Current Password</label>
+                            <input id="a-curpass" type="password" class="form-input w-full border border-stone-200 rounded-lg px-4 py-2.5 text-sm">
+                            <div id="a-curpass-error" class="error-message"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">New Password</label>
+                            <input id="a-newpass" type="password" class="form-input w-full border border-stone-200 rounded-lg px-4 py-2.5 text-sm">
+                            <div id="a-newpass-error" class="error-message"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Confirm New Password</label>
+                            <input id="a-confpass" type="password" class="form-input w-full border border-stone-200 rounded-lg px-4 py-2.5 text-sm">
+                            <div id="a-confpass-error" class="error-message"></div>
+                        </div>
+                        <button type="submit" class="bg-stone-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-stone-800">Update Password</button>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        requireAdmin();
+        renderAdminLayout('profile', 'Profile');
+
+        function loadInfo() {
+            var a = getAdmin();
+            if (!a) return;
+            document.getElementById('a-name').value = a.name || '';
+            document.getElementById('a-email').value = a.email || '';
+            document.getElementById('a-username').value = a.username || '';
+        }
+
+        function saveInfo(e) {
+            e.preventDefault();
+            var form = e.target;
+            clearAllErrors(form);
+            var name = document.getElementById('a-name').value.trim();
+            var email = document.getElementById('a-email').value.trim();
+            var username = document.getElementById('a-username').value.trim();
+            var valid = true;
+            if (!name) { showError('a-name', 'Name required'); valid = false; }
+            if (!email || !validateEmail(email)) { showError('a-email', 'Valid email required'); valid = false; }
+            if (!username) { showError('a-username', 'Username required'); valid = false; }
+            if (!valid) return;
+            var a = getAdmin();
+            a.name = name; a.email = email; a.username = username;
+            saveAdmin(a);
+            showToast('Profile updated');
+            renderAdminLayout('profile', 'Profile'); // refresh avatar
+        }
+
+        function changePassword(e) {
+            e.preventDefault();
+            var form = e.target;
+            clearAllErrors(form);
+            var cur = document.getElementById('a-curpass').value;
+            var newPass = document.getElementById('a-newpass').value;
+            var conf = document.getElementById('a-confpass').value;
+            var valid = true;
+            var a = getAdmin();
+            if (!cur || cur !== a.password) { showError('a-curpass', 'Current password is incorrect'); valid = false; }
+            if (!newPass || newPass.length < 6) { showError('a-newpass', 'At least 6 characters'); valid = false; }
+            if (newPass !== conf) { showError('a-confpass', 'Passwords do not match'); valid = false; }
+            if (!valid) return;
+            a.password = newPass;
+            saveAdmin(a);
+            form.reset();
+            showToast('Password changed');
+        }
+
+        loadInfo();
+    </script>
+</body>
+</html>

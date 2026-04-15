@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - DESKCRAFT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-stone-50 min-h-screen flex flex-col">
+
+    
+    <nav class="bg-white border-b border-stone-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="text-xl font-bold tracking-wider text-stone-900">DESKCRAFT</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Home</a>
+                    <a href="products.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Products</a>
+                    <a href="about.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">About</a>
+                    <a href="contact.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Contact</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="login.html" class="text-stone-500 hover:text-stone-900"><i class="fa-regular fa-user"></i></a>
+                    <a href="cart.html" class="relative text-stone-500 hover:text-stone-900"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count hidden absolute -top-2 -right-2 bg-amber-700 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span></a>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-stone-500"><i class="fa-solid fa-bars fa-lg"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="menu-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6">
+            <button onclick="toggleMobileMenu()" class="mb-8 text-stone-500"><i class="fa-solid fa-xmark fa-lg"></i></button>
+            <div class="flex flex-col space-y-4">
+                <a href="index.html" class="text-sm font-medium text-stone-500">Home</a>
+                <a href="products.html" class="text-sm font-medium text-stone-500">Products</a>
+                <a href="about.html" class="text-sm font-medium text-stone-500">About</a>
+                <a href="contact.html" class="text-sm font-medium text-stone-500">Contact</a>
+                <hr class="border-stone-200">
+                <a href="login.html" class="text-sm font-medium text-stone-500">Login</a>
+                <a href="signup.html" class="text-sm font-medium text-stone-500">Sign Up</a>
+                <a href="cart.html" class="text-sm font-medium text-stone-500">Cart</a>
+                <a href="orders.html" class="text-sm font-medium text-stone-500">My Orders</a>
+            </div>
+        </div>
+    </nav>
+
+    
+    <main class="flex-grow flex items-center justify-center py-16 px-4">
+        <div class="max-w-lg mx-auto w-full bg-white rounded-lg shadow-sm p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-stone-900 tracking-wide">Create Account</h1>
+                <p class="text-sm text-stone-500 mt-2">Join DESKCRAFT for exclusive deals</p>
+            </div>
+
+            <form onsubmit="validateSignup(event)" novalidate>
+                
+                <div class="mb-5">
+                    <label for="fullname" class="block text-sm font-medium text-stone-700">Full Name</label>
+                    <input type="text" id="fullname" name="fullname" required placeholder="Haashir Azhar" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="fullname-error" class="error-message"></div>
+                </div>
+
+                
+                <div class="mb-5">
+                    <label for="email" class="block text-sm font-medium text-stone-700">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="haashir@example.com" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="email-error" class="error-message"></div>
+                </div>
+
+                
+                <div class="mb-5">
+                    <label for="password" class="block text-sm font-medium text-stone-700">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Min. 6 characters" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="password-error" class="error-message"></div>
+                </div>
+
+                
+                <div class="mb-5">
+                    <label for="confirm-password" class="block text-sm font-medium text-stone-700">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirm your password" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="confirm-password-error" class="error-message"></div>
+                </div>
+
+                
+                <div class="mb-5">
+                    <label for="gender" class="block text-sm font-medium text-stone-700">Gender</label>
+                    <select id="gender" name="gender" required class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div id="gender-error" class="error-message"></div>
+                </div>
+
+                
+                <div class="mb-5">
+                    <label for="dob" class="block text-sm font-medium text-stone-700">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" required class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="dob-error" class="error-message"></div>
+                </div>
+
+                
+                <div class="mb-5">
+                    <label for="phone" class="block text-sm font-medium text-stone-700">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="+92 310 478 4471" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="phone-error" class="error-message"></div>
+                </div>
+
+                
+                <div class="mb-5">
+                    <label for="city" class="block text-sm font-medium text-stone-700">City</label>
+                    <input type="text" id="city" name="city" required placeholder="Lahore" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="city-error" class="error-message"></div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="address" class="block text-sm font-medium text-stone-700">Address</label>
+                    <textarea id="address" name="address" required placeholder="Your full address" rows="3" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1"></textarea>
+                    <div id="address-error" class="error-message"></div>
+                </div>
+
+                
+                <button type="submit" class="w-full bg-stone-900 text-white py-3 rounded-lg text-sm font-medium btn-hover">Create Account</button>
+            </form>
+
+            <p class="text-center text-sm text-stone-500 mt-6">Already have an account? <a href="login.html" class="text-stone-900 font-medium hover:underline">Login</a></p>
+        </div>
+    </main>
+
+    
+    <footer class="bg-stone-900 text-stone-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div><h3 class="text-white text-lg font-bold tracking-wider mb-4">DESKCRAFT</h3><p class="text-sm text-stone-400">Clean desk gear for people who care about their setup.</p></div>
+                <div><h4 class="text-white text-sm font-semibold mb-4">Quick Links</h4><ul class="space-y-2 text-sm"><li><a href="index.html" class="hover:text-white">Home</a></li><li><a href="products.html" class="hover:text-white">Products</a></li><li><a href="about.html" class="hover:text-white">About Us</a></li><li><a href="contact.html" class="hover:text-white">Contact</a></li></ul></div>
+                <div><h4 class="text-white text-sm font-semibold mb-4">Account</h4><ul class="space-y-2 text-sm"><li><a href="login.html" class="hover:text-white">Login</a></li><li><a href="signup.html" class="hover:text-white">Sign Up</a></li><li><a href="cart.html" class="hover:text-white">Cart</a></li><li><a href="orders.html" class="hover:text-white">My Orders</a></li></ul></div>
+                <div><h4 class="text-white text-sm font-semibold mb-4">Follow Us</h4><div class="flex space-x-4"><a href="#" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a><a href="#" class="hover:text-white"><i class="fa-brands fa-instagram"></i></a><a href="#" class="hover:text-white"><i class="fa-brands fa-facebook-f"></i></a></div></div>
+            </div>
+            <div class="border-t border-stone-800 mt-8 pt-8 text-center text-sm text-stone-500"><p>&copy; 2026 DESKCRAFT. All rights reserved. | SAP ID: 70145442</p></div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

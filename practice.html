@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-stone-50 min-h-screen flex flex-col">
+    <main class="flex-grow flex items-center justify-center py-16 px-4">
+        <div class="max-w-md mx-auto w-full bg-white rounded-lg shadow-sm p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-stone-900 tracking-wide">Grade Aggregator</h1>
+                <p class="text-sm text-stone-500 mt-2">Enter your marks below</p>
+            </div>
+
+            <form onsubmit="calculateAggregate(event)" novalidate>
+                
+                <div class="mb-5">
+                    <label for="Intermediate-marks" class="block text-sm font-medium text-stone-700">Intermediate Marks (?/1100)</label>
+                    <input type="number" id="intermediate-marks" name="password" required placeholder="Enter your marks" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="Intermediate-marks-error" class="error-message"></div>
+                </div>
+
+                <div class="mb-5">
+                    <label for="matric-marks" class="block text-sm font-medium text-stone-700">Matric Marks (?/1100)</label>
+                    <input type="number" id="matric-marks" name="password" required placeholder="Enter your marks" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="matric-marks-error" class="error-message"></div>
+                </div>
+
+                <div class="mb-5">
+                    <label for="entry-test-marks" class="block text-sm font-medium text-stone-700">Entry Test Marks (?/100)</label>
+                    <input type="number" id="entry-test-marks" name="password" required placeholder="Enter your marks" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="entry-test-marks-error" class="error-message"></div>
+                </div>
+
+                <div class="mb-5">
+                    <label for="result" class="block text-sm font-medium text-stone-700">Aggregate: </label>
+                    <input type="number" id="result" name="password" required placeholder="Result" class="form-input w-full border border-green-200 rounded-lg px-4 py-3 text-sm mt-1">
+                    <div id="result-error" class="error-message"></div>
+                </div>
+
+
+                <button type="submit" class="w-full bg-stone-900 text-white py-3 rounded-lg text-sm font-medium btn-hover">Calculate Aggregate</button>
+            </form>
+
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

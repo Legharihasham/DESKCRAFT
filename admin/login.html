@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - DESKCRAFT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="bg-stone-100 min-h-screen flex items-center justify-center px-4">
+
+    <div class="max-w-md w-full bg-white rounded-xl shadow-sm p-8">
+        <div class="text-center mb-8">
+            <a href="../index.html" class="text-xl font-bold tracking-wider text-stone-900">DESKCRAFT</a>
+            <p class="text-[11px] text-stone-400 tracking-widest uppercase mt-1">Admin Panel</p>
+        </div>
+
+        <h1 class="text-2xl font-bold text-stone-900 mb-2 text-center">Admin Login</h1>
+        <p class="text-sm text-stone-500 mb-8 text-center">Sign in to manage the store</p>
+
+        <form onsubmit="adminLogin(event)" novalidate>
+            <div class="mb-5">
+                <label for="admin-username" class="block text-sm font-medium text-stone-700 mb-1">Username</label>
+                <input type="text" id="admin-username" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="admin">
+                <div id="admin-username-error" class="error-message"></div>
+            </div>
+
+            <div class="mb-6">
+                <label for="admin-password" class="block text-sm font-medium text-stone-700 mb-1">Password</label>
+                <input type="password" id="admin-password" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="Password">
+                <div id="admin-password-error" class="error-message"></div>
+            </div>
+
+            <button type="submit" class="w-full bg-stone-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-stone-800 transition-colors">Sign In</button>
+        </form>
+
+        <div class="mt-8 text-center">
+            <p class="text-xs text-stone-400">Default credentials:<br><span class="font-mono text-stone-600">admin</span> / <span class="font-mono text-stone-600">admin123</span></p>
+            <a href="../index.html" class="inline-block mt-6 text-sm text-stone-500 hover:text-stone-900"><i class="fa-solid fa-arrow-left mr-1"></i> Back to store</a>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        // If already logged in, skip the form
+        if (isAdminLoggedIn()) { window.location.href = 'dashboard.html'; }
+
+        function adminLogin(e) {
+            e.preventDefault();
+            var form = e.target;
+            clearAllErrors(form);
+            var username = document.getElementById('admin-username').value.trim();
+            var password = document.getElementById('admin-password').value;
+            var valid = true;
+            if (!username) { showError('admin-username', 'Username is required'); valid = false; }
+            if (!password) { showError('admin-password', 'Password is required'); valid = false; }
+            if (!valid) return;
+            var admin = getAdmin();
+            if (!admin || username !== admin.username || password !== admin.password) {
+                showError('admin-password', 'Invalid credentials');
+                return;
+            }
+            setAdminLoggedIn(true);
+            showToast('Welcome back, ' + (admin.name || 'Admin'));
+            setTimeout(function () { window.location.href = 'dashboard.html'; }, 700);
+        }
+    </script>
+</body>
+</html>

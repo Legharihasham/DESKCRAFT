@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DESKCRAFT Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="bg-stone-50 flex min-h-screen">
+
+    <div id="admin-sidebar-mount"></div>
+
+    <div class="flex-1 flex flex-col min-h-screen md:ml-0">
+        <div id="admin-topbar-mount"></div>
+
+        <main class="flex-1 p-4 sm:p-8">
+
+            <!-- Stat cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-10" id="stat-cards"></div>
+
+            <!-- Recent orders -->
+            <div class="bg-white rounded-xl border border-stone-100 overflow-hidden mb-10">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+                    <h2 class="text-base font-semibold text-stone-900">Recent Orders</h2>
+                    <a href="orders.html" class="text-sm text-amber-700 hover:text-amber-800">View all &rarr;</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="admin-table">
+                        <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th></tr></thead>
+                        <tbody id="recent-orders-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Low stock alerts -->
+            <div class="bg-white rounded-xl border border-stone-100 overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+                    <h2 class="text-base font-semibold text-stone-900">Low Stock Alerts</h2>
+                    <a href="products.html" class="text-sm text-amber-700 hover:text-amber-800">Manage stock &rarr;</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="admin-table">
+                        <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th></tr></thead>
+                        <tbody id="low-stock-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        requireAdmin();
+        renderAdminLayout('dashboard', 'Dashboard');
+
+        function renderStats() {
+            var orders = getOrders();
+            var products = getProducts();
+            var categories = getCategories();
+            var users = getUsers();
+
+            var totalSales = 0;
+            for (var i = 0; i < orders.length; i++) {
+                if (orders[i].status !== 'Cancelled') totalSales += orders[i].total;
+            }
+
+            var cards = [
+                { label: 'Total Sales',     value: fmtPrice(totalSales), icon: 'fa-sack-dollar', color: 'text-amber-700 bg-amber-50' },
+                { label: 'Total Orders',    value: orders.length,         icon: 'fa-box',         color: 'text-blue-700 bg-blue-50' },
+                { label: 'Products',        value: products.length,       icon: 'fa-tag',         color: 'text-emerald-700 bg-emerald-50' },
+                { label: 'Categories',      value: categories.length,     icon: 'fa-layer-group', color: 'text-purple-700 bg-purple-50' },
+                { label: 'Customers',       value: users.length,          icon: 'fa-users',       color: 'text-rose-700 bg-rose-50' }
+            ];
+
+            var html = '';
+            for (var j = 0; j < cards.length; j++) {
+                var c = cards[j];
+                html +=
+                    '<div class="stat-card">' +
+                    '  <div class="flex items-center justify-between mb-3">' +
+                    '    <p class="text-xs font-medium uppercase tracking-widest text-stone-400">' + c.label + '</p>' +
+                    '    <div class="w-9 h-9 rounded-full flex items-center justify-center ' + c.color + '"><i class="fa-solid ' + c.icon + '"></i></div>' +
+                    '  </div>' +
+                    '  <p class="text-2xl font-bold text-stone-900">' + c.value + '</p>' +
+                    '</div>';
+            }
+            document.getElementById('stat-cards').innerHTML = html;
+        }
+
+        function renderRecentOrders() {
+            var orders = getOrders().slice();
+            orders.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+            var recent = orders.slice(0, 5);
+            var body = document.getElementById('recent-orders-body');
+            if (!recent.length) { body.innerHTML = '<tr><td colspan="5" class="text-center text-stone-400 py-6">No orders yet.</td></tr>'; return; }
+            var html = '';
+            for (var i = 0; i < recent.length; i++) {
+                var o = recent[i];
+                html +=
+                    '<tr>' +
+                    '  <td class="font-semibold">' + esc(o.id) + '</td>' +
+                    '  <td>' + esc(o.customer ? o.customer.name : '-') + '</td>' +
+                    '  <td class="text-stone-500">' + esc(o.date) + '</td>' +
+                    '  <td class="font-semibold">' + fmtPrice(o.total) + '</td>' +
+                    '  <td>' + statusBadge(o.status) + '</td>' +
+                    '</tr>';
+            }
+            body.innerHTML = html;
+        }
+
+        function statusBadge(status) {
+            var cls = 'bg-stone-50 text-stone-700 border-stone-200';
+            if (status === 'Delivered') cls = 'bg-green-50 text-green-700 border-green-200';
+            else if (status === 'In Transit' || status === 'Shipped') cls = 'bg-blue-50 text-blue-700 border-blue-200';
+            else if (status === 'Processing') cls = 'bg-amber-50 text-amber-700 border-amber-200';
+            else if (status === 'Cancelled') cls = 'bg-red-50 text-red-700 border-red-200';
+            return '<span class="text-xs font-medium px-2.5 py-1 rounded-full border ' + cls + '">' + esc(status) + '</span>';
+        }
+
+        function renderLowStock() {
+            var products = getProducts().slice();
+            products.sort(function (a, b) { return (a.stock || 0) - (b.stock || 0); });
+            var low = products.filter(function (p) { return (p.stock || 0) <= 15; }).slice(0, 5);
+            var body = document.getElementById('low-stock-body');
+            if (!low.length) { body.innerHTML = '<tr><td colspan="4" class="text-center text-stone-400 py-6">All products well stocked.</td></tr>'; return; }
+            var html = '';
+            for (var i = 0; i < low.length; i++) {
+                var p = low[i];
+                var stockColor = p.stock === 0 ? 'text-red-700 bg-red-50' : (p.stock < 10 ? 'text-amber-700 bg-amber-50' : 'text-stone-700 bg-stone-100');
+                html +=
+                    '<tr>' +
+                    '  <td class="font-medium">' + esc(p.name) + '</td>' +
+                    '  <td class="text-stone-500 capitalize">' + esc(p.category) + '</td>' +
+                    '  <td>' + fmtPrice(p.price) + '</td>' +
+                    '  <td><span class="text-xs font-semibold px-2.5 py-1 rounded-full ' + stockColor + '">' + p.stock + ' left</span></td>' +
+                    '</tr>';
+            }
+            body.innerHTML = html;
+        }
+
+        renderStats();
+        renderRecentOrders();
+        renderLowStock();
+    </script>
+</body>
+</html>

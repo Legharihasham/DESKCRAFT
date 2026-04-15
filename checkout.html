@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - DESKCRAFT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="flex flex-col min-h-screen bg-stone-50">
+
+    
+    <nav class="bg-white border-b border-stone-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="text-xl font-bold tracking-wider text-stone-900">DESKCRAFT</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Home</a>
+                    <a href="products.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Products</a>
+                    <a href="about.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">About</a>
+                    <a href="contact.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Contact</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="login.html" class="text-stone-500 hover:text-stone-900"><i class="fa-regular fa-user"></i></a>
+                    <a href="cart.html" class="relative text-stone-500 hover:text-stone-900"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count hidden absolute -top-2 -right-2 bg-amber-700 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span></a>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-stone-500"><i class="fa-solid fa-bars fa-lg"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="menu-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6">
+            <button onclick="toggleMobileMenu()" class="mb-8 text-stone-500"><i class="fa-solid fa-xmark fa-lg"></i></button>
+            <div class="flex flex-col space-y-4">
+                <a href="index.html" class="text-sm font-medium text-stone-500">Home</a>
+                <a href="products.html" class="text-sm font-medium text-stone-500">Products</a>
+                <a href="about.html" class="text-sm font-medium text-stone-500">About</a>
+                <a href="contact.html" class="text-sm font-medium text-stone-500">Contact</a>
+                <hr class="border-stone-200">
+                <a href="login.html" class="text-sm font-medium text-stone-500">Login</a>
+                <a href="signup.html" class="text-sm font-medium text-stone-500">Sign Up</a>
+                <a href="cart.html" class="text-sm font-medium text-stone-500">Cart</a>
+                <a href="orders.html" class="text-sm font-medium text-stone-500">My Orders</a>
+            </div>
+        </div>
+    </nav>
+
+    
+    <section class="bg-stone-50 py-10 border-b border-stone-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Checkout</h1>
+        </div>
+    </section>
+
+    
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                
+                <div class="lg:col-span-2">
+                    <form id="checkout-form" onsubmit="return false;">
+
+                        
+                        <div class="bg-white rounded-lg p-6 mb-6">
+                            <h2 class="text-lg font-semibold text-stone-900 mb-5">Customer Information</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="checkout-email" class="block text-sm font-medium text-stone-600 mb-1">Email</label>
+                                    <input type="email" id="checkout-email" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="you@example.com">
+                                    <p id="checkout-email-error" class="error-message">Email is required</p>
+                                </div>
+                                <div>
+                                    <label for="checkout-phone" class="block text-sm font-medium text-stone-600 mb-1">Phone</label>
+                                    <input type="tel" id="checkout-phone" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="+92 310 478 4471">
+                                    <p id="checkout-phone-error" class="error-message">Phone number is required</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="bg-white rounded-lg p-6 mb-6">
+                            <h2 class="text-lg font-semibold text-stone-900 mb-5">Shipping Address</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="checkout-name" class="block text-sm font-medium text-stone-600 mb-1">Full Name</label>
+                                    <input type="text" id="checkout-name" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="Haashir Azhar">
+                                    <p id="checkout-name-error" class="error-message">Full name is required</p>
+                                </div>
+                                <div>
+                                    <label for="checkout-address1" class="block text-sm font-medium text-stone-600 mb-1">Address Line 1</label>
+                                    <input type="text" id="checkout-address1" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="House 45, Street 12, DHA Phase 5">
+                                    <p id="checkout-address1-error" class="error-message">Address is required</p>
+                                </div>
+                                <div>
+                                    <label for="checkout-address2" class="block text-sm font-medium text-stone-600 mb-1">Address Line 2 <span class="text-stone-400">(Optional)</span></label>
+                                    <input type="text" id="checkout-address2" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="Apt, suite, unit, etc.">
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="checkout-city" class="block text-sm font-medium text-stone-600 mb-1">City</label>
+                                        <input type="text" id="checkout-city" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="Lahore">
+                                        <p id="checkout-city-error" class="error-message">City is required</p>
+                                    </div>
+                                    <div>
+                                        <label for="checkout-state" class="block text-sm font-medium text-stone-600 mb-1">State / Province</label>
+                                        <input type="text" id="checkout-state" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="Punjab">
+                                        <p id="checkout-state-error" class="error-message">State is required</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="checkout-zip" class="block text-sm font-medium text-stone-600 mb-1">Zip Code</label>
+                                        <input type="text" id="checkout-zip" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="54000">
+                                        <p id="checkout-zip-error" class="error-message">Zip code is required</p>
+                                    </div>
+                                    <div>
+                                        <label for="checkout-country" class="block text-sm font-medium text-stone-600 mb-1">Country</label>
+                                        <select id="checkout-country" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm bg-white">
+                                            <option value="">Select Country</option>
+                                            <option value="PK" selected>Pakistan</option>
+                                            <option value="AE">UAE</option>
+                                            <option value="SA">Saudi Arabia</option>
+                                            <option value="US">United States</option>
+                                            <option value="GB">United Kingdom</option>
+                                            <option value="CA">Canada</option>
+                                            <option value="OTHER">Other</option>
+                                        </select>
+                                        <p id="checkout-country-error" class="error-message">Country is required</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="bg-white rounded-lg p-6 mb-6">
+                            <h2 class="text-lg font-semibold text-stone-900 mb-5">Payment Method</h2>
+
+                            
+                            <div class="space-y-3 mb-6">
+                                <label class="flex items-center gap-3 border border-stone-200 rounded-lg p-4 cursor-pointer hover:border-stone-400 transition-colors has-checked-border">
+                                    <input type="radio" name="payment-method" value="credit-card" class="w-4 h-4 text-stone-900 accent-stone-900" checked>
+                                    <span class="text-sm font-medium text-stone-700">Credit Card</span>
+                                </label>
+                                <label class="flex items-center gap-3 border border-stone-200 rounded-lg p-4 cursor-pointer hover:border-stone-400 transition-colors">
+                                    <input type="radio" name="payment-method" value="paypal" class="w-4 h-4 text-stone-900 accent-stone-900">
+                                    <span class="text-sm font-medium text-stone-700">PayPal</span>
+                                </label>
+                                <label class="flex items-center gap-3 border border-stone-200 rounded-lg p-4 cursor-pointer hover:border-stone-400 transition-colors">
+                                    <input type="radio" name="payment-method" value="apple-pay" class="w-4 h-4 text-stone-900 accent-stone-900">
+                                    <span class="text-sm font-medium text-stone-700">Apple Pay</span>
+                                </label>
+                            </div>
+
+                            
+                            <div id="card-fields" class="space-y-4">
+                                <div>
+                                    <label for="checkout-card" class="block text-sm font-medium text-stone-600 mb-1">Card Number</label>
+                                    <input type="text" id="checkout-card" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="1234 5678 9012 3456" maxlength="19">
+                                    <p id="checkout-card-error" class="error-message">Card number is required</p>
+                                </div>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label for="checkout-expiry" class="block text-sm font-medium text-stone-600 mb-1">Expiry Date</label>
+                                        <input type="text" id="checkout-expiry" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="MM/YY" maxlength="5">
+                                        <p id="checkout-expiry-error" class="error-message">Expiry is required</p>
+                                    </div>
+                                    <div>
+                                        <label for="checkout-cvv" class="block text-sm font-medium text-stone-600 mb-1">CVV</label>
+                                        <input type="text" id="checkout-cvv" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="123" maxlength="4">
+                                        <p id="checkout-cvv-error" class="error-message">CVV is required</p>
+                                    </div>
+                                    <div class="col-span-2 sm:col-span-1">
+                                        <label for="checkout-cardname" class="block text-sm font-medium text-stone-600 mb-1">Name on Card</label>
+                                        <input type="text" id="checkout-cardname" class="form-input w-full border border-stone-200 rounded-lg px-4 py-3 text-sm" placeholder="Haashir Azhar">
+                                        <p id="checkout-cardname-error" class="error-message">Name on card is required</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <button type="button" id="place-order-btn" class="w-full bg-stone-900 text-white py-4 rounded-lg text-sm font-semibold tracking-wide btn-hover hover:bg-stone-700 transition-colors">
+                            Place Order
+                        </button>
+
+                    </form>
+                </div>
+
+                
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg p-6 sticky top-24">
+                        <h2 class="text-lg font-semibold text-stone-900 mb-6">Order Summary</h2>
+                        <div id="checkout-summary">
+                            
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    
+    <footer class="bg-stone-900 text-stone-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div><h3 class="text-white text-lg font-bold tracking-wider mb-4">DESKCRAFT</h3><p class="text-sm text-stone-400">Clean desk gear for people who care about their setup.</p></div>
+                <div><h4 class="text-white text-sm font-semibold mb-4">Quick Links</h4><ul class="space-y-2 text-sm"><li><a href="index.html" class="hover:text-white">Home</a></li><li><a href="products.html" class="hover:text-white">Products</a></li><li><a href="about.html" class="hover:text-white">About Us</a></li><li><a href="contact.html" class="hover:text-white">Contact</a></li></ul></div>
+                <div><h4 class="text-white text-sm font-semibold mb-4">Account</h4><ul class="space-y-2 text-sm"><li><a href="login.html" class="hover:text-white">Login</a></li><li><a href="signup.html" class="hover:text-white">Sign Up</a></li><li><a href="cart.html" class="hover:text-white">Cart</a></li><li><a href="orders.html" class="hover:text-white">My Orders</a></li></ul></div>
+                <div><h4 class="text-white text-sm font-semibold mb-4">Follow Us</h4><div class="flex space-x-4"><a href="#" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a><a href="#" class="hover:text-white"><i class="fa-brands fa-instagram"></i></a><a href="#" class="hover:text-white"><i class="fa-brands fa-facebook-f"></i></a></div></div>
+            </div>
+            <div class="border-t border-stone-800 mt-8 pt-8 text-center text-sm text-stone-500"><p>&copy; 2026 DESKCRAFT. All rights reserved. | SAP ID: 70145442</p></div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // render checkout summary
+        function renderCheckoutSummary() {
+            var cart = getCart();
+            var container = document.getElementById('checkout-summary');
+            if (!container) return;
+
+            if (cart.length === 0) {
+                container.innerHTML =
+                    '<p class="text-stone-400 text-sm text-center py-4">Your cart is empty.</p>' +
+                    '<a href="products.html" class="block text-center text-sm text-stone-500 hover:text-stone-900 mt-2">Browse Products</a>';
+                return;
+            }
+
+            // Build items list
+            var subtotal = 0;
+            var itemsHtml = '';
+            for (var i = 0; i < cart.length; i++) {
+                var item = cart[i];
+                var lineTotal = item.price * item.quantity;
+                subtotal += lineTotal;
+
+                itemsHtml +=
+                    '<div class="flex justify-between items-start py-3' + (i < cart.length - 1 ? ' border-b border-stone-100' : '') + '">' +
+                    '  <div class="flex-grow min-w-0 pr-4">' +
+                    '    <p class="text-sm font-medium text-stone-800 truncate">' + item.name + '</p>' +
+                    '    <p class="text-xs text-stone-400">Qty: ' + item.quantity + '</p>' +
+                    '  </div>' +
+                    '  <span class="text-sm font-medium text-stone-700 flex-shrink-0">Rs. ' + lineTotal.toLocaleString() + '</span>' +
+                    '</div>';
+            }
+
+            var shipping = subtotal > 5000 ? 0 : 500;
+            var tax = subtotal * 0.08;
+            var total = subtotal + shipping + tax;
+
+            container.innerHTML =
+                '<div class="mb-4">' + itemsHtml + '</div>' +
+                '<div class="border-t border-stone-200 pt-4 space-y-3 text-sm">' +
+                '  <div class="flex justify-between text-stone-600">' +
+                '    <span>Subtotal</span>' +
+                '    <span>Rs. ' + subtotal.toLocaleString() + '</span>' +
+                '  </div>' +
+                '  <div class="flex justify-between text-stone-600">' +
+                '    <span>Shipping</span>' +
+                '    <span>' + (shipping === 0 ? 'Free' : 'Rs. ' + shipping.toLocaleString()) + '</span>' +
+                '  </div>' +
+                '  <div class="flex justify-between text-stone-600">' +
+                '    <span>Tax (est. 8%)</span>' +
+                '    <span>Rs. ' + tax.toLocaleString() + '</span>' +
+                '  </div>' +
+                '  <hr class="border-stone-200">' +
+                '  <div class="flex justify-between text-stone-900 font-semibold text-base">' +
+                '    <span>Total</span>' +
+                '    <span>Rs. ' + total.toLocaleString() + '</span>' +
+                '  </div>' +
+                '</div>';
+        }
+
+        // payment method toggle
+        function setupPaymentToggle() {
+            var radios = document.querySelectorAll('input[name="payment-method"]');
+            var cardFields = document.getElementById('card-fields');
+
+            for (var i = 0; i < radios.length; i++) {
+                radios[i].addEventListener('change', function () {
+                    if (this.value === 'credit-card') {
+                        cardFields.style.display = 'block';
+                    } else {
+                        cardFields.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // place order
+        function setupPlaceOrder() {
+            var btn = document.getElementById('place-order-btn');
+            if (!btn) return;
+
+            btn.addEventListener('click', function () {
+                // Clear previous errors
+                var form = document.getElementById('checkout-form');
+                if (form) clearAllErrors(form);
+
+                var isValid = true;
+
+                // Required fields to validate
+                var fields = [
+                    { id: 'checkout-email', msg: 'Email is required' },
+                    { id: 'checkout-phone', msg: 'Phone number is required' },
+                    { id: 'checkout-name', msg: 'Full name is required' },
+                    { id: 'checkout-address1', msg: 'Address is required' },
+                    { id: 'checkout-city', msg: 'City is required' },
+                    { id: 'checkout-state', msg: 'State is required' },
+                    { id: 'checkout-zip', msg: 'Zip code is required' },
+                    { id: 'checkout-country', msg: 'Country is required' }
+                ];
+
+                for (var i = 0; i < fields.length; i++) {
+                    var el = document.getElementById(fields[i].id);
+                    if (el && !el.value.trim()) {
+                        showError(fields[i].id, fields[i].msg);
+                        isValid = false;
+                    }
+                }
+
+                // Validate email format
+                var emailEl = document.getElementById('checkout-email');
+                if (emailEl && emailEl.value.trim() && !validateEmail(emailEl.value.trim())) {
+                    showError('checkout-email', 'Please enter a valid email');
+                    isValid = false;
+                }
+
+                // Validate card fields if credit card is selected
+                var selectedPayment = document.querySelector('input[name="payment-method"]:checked');
+                if (selectedPayment && selectedPayment.value === 'credit-card') {
+                    var cardFields = [
+                        { id: 'checkout-card', msg: 'Card number is required' },
+                        { id: 'checkout-expiry', msg: 'Expiry date is required' },
+                        { id: 'checkout-cvv', msg: 'CVV is required' },
+                        { id: 'checkout-cardname', msg: 'Name on card is required' }
+                    ];
+
+                    for (var j = 0; j < cardFields.length; j++) {
+                        var cardEl = document.getElementById(cardFields[j].id);
+                        if (cardEl && !cardEl.value.trim()) {
+                            showError(cardFields[j].id, cardFields[j].msg);
+                            isValid = false;
+                        }
+                    }
+                }
+
+                // Check if cart is empty
+                var cart = getCart();
+                if (cart.length === 0) {
+                    showToast('Your cart is empty. Add items before checking out.');
+                    return;
+                }
+
+                if (isValid) {
+                    // Build the new order and persist it
+                    var subtotal = 0;
+                    var itemsForOrder = [];
+                    for (var k = 0; k < cart.length; k++) {
+                        subtotal += cart[k].price * cart[k].quantity;
+                        itemsForOrder.push({ id: cart[k].id, name: cart[k].name, price: cart[k].price, quantity: cart[k].quantity });
+                    }
+                    var shipping = subtotal > 5000 ? 0 : 500;
+                    var tax = Math.round(subtotal * 0.08);
+                    var total = subtotal + shipping + tax;
+
+                    var orders = getOrders();
+                    var nextNumber = orders.length + 1;
+                    var newOrderId = 'ORD-2026-' + ('000' + nextNumber).slice(-3);
+
+                    var newOrder = {
+                        id: newOrderId,
+                        date: new Date().toISOString().slice(0, 10),
+                        status: 'Pending',
+                        customer: {
+                            name: document.getElementById('checkout-name').value.trim(),
+                            email: document.getElementById('checkout-email').value.trim(),
+                            phone: document.getElementById('checkout-phone').value.trim(),
+                            city: document.getElementById('checkout-city').value.trim(),
+                            address: document.getElementById('checkout-address1').value.trim()
+                        },
+                        items: itemsForOrder,
+                        total: total
+                    };
+
+                    orders.push(newOrder);
+                    saveOrders(orders);
+
+                    // Decrement stock
+                    var allProducts = getProducts();
+                    for (var m = 0; m < itemsForOrder.length; m++) {
+                        var p = allProducts.find(function (x) { return x.id === itemsForOrder[m].id; });
+                        if (p) { p.stock = Math.max(0, (p.stock || 0) - itemsForOrder[m].quantity); }
+                    }
+                    saveProducts(allProducts);
+
+                    saveCart([]);
+                    showToast('Order placed successfully! Thank you for your purchase.');
+                    setTimeout(function () {
+                        window.location.href = 'orders.html';
+                    }, 1800);
+                }
+            });
+        }
+
+        // prefill from session if user is logged in
+        function prefillFromSession() {
+            var session = getSession();
+            if (!session) return;
+            var user = getUsers().find(function (u) { return u.email === session.email; });
+            if (!user) return;
+            var map = { 'checkout-email': user.email, 'checkout-phone': user.phone, 'checkout-name': user.fullname, 'checkout-address1': user.address, 'checkout-city': user.city };
+            for (var k in map) { var el = document.getElementById(k); if (el && !el.value) el.value = map[k]; }
+        }
+
+        // init
+        document.addEventListener('DOMContentLoaded', function () {
+            renderCheckoutSummary();
+            setupPaymentToggle();
+            setupPlaceOrder();
+            prefillFromSession();
+        });
+    </script>
+
+</body>
+</html>

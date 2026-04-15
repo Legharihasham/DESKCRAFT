@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - DESKCRAFT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    
+    <nav class="bg-white border-b border-stone-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="text-xl font-bold tracking-wider text-stone-900">DESKCRAFT</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Home</a>
+                    <a href="products.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Products</a>
+                    <a href="about.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">About</a>
+                    <a href="contact.html" class="nav-link text-sm font-medium text-stone-500 hover:text-stone-900">Contact</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="login.html" class="text-stone-500 hover:text-stone-900"><i class="fa-regular fa-user"></i></a>
+                    <a href="cart.html" class="relative text-stone-500 hover:text-stone-900"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count hidden absolute -top-2 -right-2 bg-amber-700 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span></a>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-stone-500"><i class="fa-solid fa-bars fa-lg"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="menu-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6">
+            <button onclick="toggleMobileMenu()" class="mb-8 text-stone-500"><i class="fa-solid fa-xmark fa-lg"></i></button>
+            <div class="flex flex-col space-y-4">
+                <a href="index.html" class="text-sm font-medium text-stone-500">Home</a>
+                <a href="products.html" class="text-sm font-medium text-stone-500">Products</a>
+                <a href="about.html" class="text-sm font-medium text-stone-500">About</a>
+                <a href="contact.html" class="text-sm font-medium text-stone-500">Contact</a>
+                <hr class="border-stone-200">
+                <a href="login.html" class="text-sm font-medium text-stone-500">Login</a>
+                <a href="signup.html" class="text-sm font-medium text-stone-500">Sign Up</a>
+                <a href="cart.html" class="text-sm font-medium text-stone-500">Cart</a>
+                <a href="orders.html" class="text-sm font-medium text-stone-500">My Orders</a>
+            </div>
+        </div>
+    </nav>
+
+    
+    <section class="bg-stone-50 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-stone-900 tracking-tight">My Orders</h1>
+        </div>
+    </section>
+
+    
+    <main class="flex-grow">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div id="orders-content">
+                
+            </div>
+        </div>
+    </main>
+
+    
+    <footer class="bg-stone-900 text-stone-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div><h3 class="text-white text-lg font-bold tracking-wider mb-4">DESKCRAFT</h3><p class="text-sm text-stone-400">Clean desk gear for people who care about their setup.</p></div>
+                <div><h4 class="text-white text-sm font-semibold mb-4">Quick Links</h4><ul class="space-y-2 text-sm"><li><a href="index.html" class="hover:text-white">Home</a></li><li><a href="products.html" class="hover:text-white">Products</a></li><li><a href="about.html" class="hover:text-white">About Us</a></li><li><a href="contact.html" class="hover:text-white">Contact</a></li></ul></div>
+                <div><h4 class="text-white text-sm font-semibold mb-4">Account</h4><ul class="space-y-2 text-sm"><li><a href="login.html" class="hover:text-white">Login</a></li><li><a href="signup.html" class="hover:text-white">Sign Up</a></li><li><a href="cart.html" class="hover:text-white">Cart</a></li><li><a href="orders.html" class="hover:text-white">My Orders</a></li></ul></div>
+                <div><h4 class="text-white text-sm font-semibold mb-4">Follow Us</h4><div class="flex space-x-4"><a href="#" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a><a href="#" class="hover:text-white"><i class="fa-brands fa-instagram"></i></a><a href="#" class="hover:text-white"><i class="fa-brands fa-facebook-f"></i></a></div></div>
+            </div>
+            <div class="border-t border-stone-800 mt-8 pt-8 text-center text-sm text-stone-500"><p>&copy; 2026 DESKCRAFT. All rights reserved. | SAP ID: 70145442</p></div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // build image lookup from products in localStorage
+        function getProductImageMap() {
+            var map = {};
+            var ps = getProducts();
+            for (var i = 0; i < ps.length; i++) { map[ps[i].name] = ps[i].image; }
+            return map;
+        }
+
+        // Show orders for the current logged-in user; fall back to all seeded orders if no session
+        function getMyOrders() {
+            var all = getOrders();
+            var session = getSession();
+            if (!session) return all;
+            return all.filter(function (o) { return o.customer && o.customer.email && o.customer.email.toLowerCase() === session.email.toLowerCase(); });
+        }
+
+        // render orders
+        function renderOrders() {
+            var container = document.getElementById('orders-content');
+            if (!container) return;
+
+            var myOrders = getMyOrders();
+            var productImages = getProductImageMap();
+
+            if (!myOrders.length) {
+                container.innerHTML =
+                    '<div class="text-center py-20 bg-white rounded-lg border border-stone-100">' +
+                    '  <i class="fa-solid fa-box-open text-4xl text-stone-300 mb-4"></i>' +
+                    '  <p class="text-stone-500">You have no orders yet.</p>' +
+                    '  <a href="products.html" class="inline-block mt-6 bg-stone-900 text-white px-6 py-2.5 rounded text-sm">Start Shopping</a>' +
+                    '</div>';
+                return;
+            }
+
+            // show latest first
+            myOrders.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+
+            var html = '';
+
+            for (var i = 0; i < myOrders.length; i++) {
+                var order = myOrders[i];
+
+                // Status badge classes
+                var badgeClasses = '';
+                if (order.status === 'Delivered') {
+                    badgeClasses = 'bg-green-50 text-green-700 border border-green-200';
+                } else if (order.status === 'In Transit' || order.status === 'Shipped') {
+                    badgeClasses = 'bg-blue-50 text-blue-700 border border-blue-200';
+                } else if (order.status === 'Processing') {
+                    badgeClasses = 'bg-amber-50 text-amber-700 border border-amber-200';
+                } else if (order.status === 'Cancelled') {
+                    badgeClasses = 'bg-red-50 text-red-700 border border-red-200';
+                } else {
+                    badgeClasses = 'bg-stone-50 text-stone-700 border border-stone-200';
+                }
+
+                // Build items list
+                var itemsHtml = '';
+                for (var j = 0; j < order.items.length; j++) {
+                    var item = order.items[j];
+                    itemsHtml +=
+                        '<div class="flex items-center justify-between py-3' + (j < order.items.length - 1 ? ' border-b border-stone-100' : '') + '">' +
+                        '  <div class="flex items-center gap-3">' +
+                        '    <div class="w-12 h-12 rounded-lg flex-shrink-0 overflow-hidden">' +
+                        '      <img src="' + (productImages[item.name] || '') + '" alt="' + item.name + '" class="w-full h-full object-cover">' +
+                        '    </div>' +
+                        '    <div>' +
+                        '      <p class="text-sm font-medium text-stone-800">' + item.name + '</p>' +
+                        '      <p class="text-xs text-stone-400">Qty: ' + item.quantity + '</p>' +
+                        '    </div>' +
+                        '  </div>' +
+                        '  <span class="text-sm font-medium text-stone-700">Rs. ' + (item.price * item.quantity).toFixed(2) + '</span>' +
+                        '</div>';
+                }
+
+                // Build order card
+                html +=
+                    '<div class="bg-white border border-stone-200 rounded-lg mb-6 overflow-hidden fade-in">' +
+                    '  ' +
+                    '  <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 bg-stone-50 border-b border-stone-100">' +
+                    '    <div class="flex flex-wrap items-center gap-4 sm:gap-8">' +
+                    '      <div>' +
+                    '        <p class="text-xs text-stone-400 uppercase tracking-wider">Order</p>' +
+                    '        <p class="text-sm font-semibold text-stone-900">' + order.id + '</p>' +
+                    '      </div>' +
+                    '      <div>' +
+                    '        <p class="text-xs text-stone-400 uppercase tracking-wider">Date</p>' +
+                    '        <p class="text-sm text-stone-700">' + order.date + '</p>' +
+                    '      </div>' +
+                    '      <div>' +
+                    '        <p class="text-xs text-stone-400 uppercase tracking-wider">Total</p>' +
+                    '        <p class="text-sm font-semibold text-stone-900">Rs. ' + order.total.toLocaleString() + '</p>' +
+                    '      </div>' +
+                    '    </div>' +
+                    '    <span class="text-xs font-medium px-3 py-1 rounded-full ' + badgeClasses + '">' + order.status + '</span>' +
+                    '  </div>' +
+                    '  ' +
+                    '  <div class="px-6 py-2" id="order-items-' + i + '">' +
+                         itemsHtml +
+                    '  </div>' +
+                    '  ' +
+                    '  <div class="px-6 py-4 border-t border-stone-100 flex justify-end">' +
+                    '    <button onclick="viewOrderDetails(\'' + order.id + '\')" class="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">View Details</button>' +
+                    '  </div>' +
+                    '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // view order details
+        function viewOrderDetails(orderId) {
+            var all = getOrders();
+            var order = all.find(function (o) { return o.id === orderId; });
+            if (!order) return;
+
+            var itemNames = [];
+            for (var j = 0; j < order.items.length; j++) {
+                itemNames.push(order.items[j].name + ' (x' + order.items[j].quantity + ')');
+            }
+
+            alert(
+                'Order: ' + order.id + '\n' +
+                'Date: ' + order.date + '\n' +
+                'Status: ' + order.status + '\n' +
+                'Items: ' + itemNames.join(', ') + '\n' +
+                'Total: Rs. ' + order.total.toLocaleString()
+            );
+        }
+
+        // Render orders on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            renderOrders();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - DESKCRAFT Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="bg-stone-50 flex min-h-screen">
+
+    <div id="admin-sidebar-mount"></div>
+    <div class="flex-1 flex flex-col min-h-screen">
+        <div id="admin-topbar-mount"></div>
+
+        <main class="flex-1 p-4 sm:p-8">
+
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-stone-900">Analytics & Reports</h2>
+                <p class="text-sm text-stone-500">Insights into sales, popular products, and store performance.</p>
+            </div>
+
+            <!-- Key metrics -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="metrics"></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Sales over time (by month) -->
+                <div class="bg-white rounded-xl border border-stone-100 p-6">
+                    <h3 class="text-base font-semibold text-stone-900 mb-4">Sales by Month</h3>
+                    <div id="sales-chart" class="space-y-3"></div>
+                </div>
+
+                <!-- Top products by revenue -->
+                <div class="bg-white rounded-xl border border-stone-100 p-6">
+                    <h3 class="text-base font-semibold text-stone-900 mb-4">Top Products (by revenue)</h3>
+                    <div id="top-products" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Order status distribution -->
+                <div class="bg-white rounded-xl border border-stone-100 p-6">
+                    <h3 class="text-base font-semibold text-stone-900 mb-4">Order Status Distribution</h3>
+                    <div id="status-chart" class="space-y-3"></div>
+                </div>
+
+                <!-- Sales by category -->
+                <div class="bg-white rounded-xl border border-stone-100 p-6">
+                    <h3 class="text-base font-semibold text-stone-900 mb-4">Sales by Category</h3>
+                    <div id="category-chart" class="space-y-3"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        requireAdmin();
+        renderAdminLayout('analytics', 'Analytics & Reporting');
+
+        function renderMetrics() {
+            var orders = getOrders().filter(function (o) { return o.status !== 'Cancelled'; });
+            var totalRevenue = 0, totalItems = 0;
+            for (var i = 0; i < orders.length; i++) {
+                totalRevenue += orders[i].total;
+                for (var j = 0; j < orders[i].items.length; j++) totalItems += orders[i].items[j].quantity;
+            }
+            var avgOrder = orders.length ? Math.round(totalRevenue / orders.length) : 0;
+
+            var cards = [
+                { label: 'Revenue',         value: fmtPrice(totalRevenue),  icon: 'fa-sack-dollar' },
+                { label: 'Orders',          value: orders.length,            icon: 'fa-box' },
+                { label: 'Avg Order Value', value: fmtPrice(avgOrder),       icon: 'fa-chart-line' },
+                { label: 'Items Sold',      value: totalItems,               icon: 'fa-cube' }
+            ];
+
+            var html = '';
+            for (var k = 0; k < cards.length; k++) {
+                html +=
+                    '<div class="stat-card">' +
+                    '  <div class="flex items-center justify-between mb-3">' +
+                    '    <p class="text-xs font-medium uppercase tracking-widest text-stone-400">' + cards[k].label + '</p>' +
+                    '    <div class="w-9 h-9 rounded-full flex items-center justify-center text-amber-700 bg-amber-50"><i class="fa-solid ' + cards[k].icon + '"></i></div>' +
+                    '  </div>' +
+                    '  <p class="text-2xl font-bold text-stone-900">' + cards[k].value + '</p>' +
+                    '</div>';
+            }
+            document.getElementById('metrics').innerHTML = html;
+        }
+
+        // Horizontal bar chart: array of { label, value, display }
+        function renderBars(mountId, rows) {
+            var max = 0; for (var i = 0; i < rows.length; i++) if (rows[i].value > max) max = rows[i].value;
+            var html = '';
+            if (!rows.length) { document.getElementById(mountId).innerHTML = '<p class="text-sm text-stone-400">No data yet.</p>'; return; }
+            for (var j = 0; j < rows.length; j++) {
+                var r = rows[j];
+                var pct = max === 0 ? 0 : Math.round((r.value / max) * 100);
+                html +=
+                    '<div>' +
+                    '  <div class="flex justify-between text-sm mb-1">' +
+                    '    <span class="text-stone-700">' + esc(r.label) + '</span>' +
+                    '    <span class="font-medium text-stone-900">' + esc(r.display != null ? r.display : r.value) + '</span>' +
+                    '  </div>' +
+                    '  <div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+                    '</div>';
+            }
+            document.getElementById(mountId).innerHTML = html;
+        }
+
+        function renderSalesByMonth() {
+            var orders = getOrders().filter(function (o) { return o.status !== 'Cancelled'; });
+            var byMonth = {};
+            for (var i = 0; i < orders.length; i++) {
+                var ym = (orders[i].date || '').slice(0, 7); // "2026-04"
+                if (!ym) continue;
+                byMonth[ym] = (byMonth[ym] || 0) + orders[i].total;
+            }
+            var keys = Object.keys(byMonth).sort();
+            var rows = [];
+            for (var k = 0; k < keys.length; k++) {
+                rows.push({ label: formatMonth(keys[k]), value: byMonth[keys[k]], display: fmtPrice(byMonth[keys[k]]) });
+            }
+            renderBars('sales-chart', rows);
+        }
+        function formatMonth(ym) {
+            var parts = ym.split('-');
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return months[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+        }
+
+        function renderTopProducts() {
+            var orders = getOrders().filter(function (o) { return o.status !== 'Cancelled'; });
+            var byProduct = {};
+            for (var i = 0; i < orders.length; i++) {
+                for (var j = 0; j < orders[i].items.length; j++) {
+                    var it = orders[i].items[j];
+                    if (!byProduct[it.name]) byProduct[it.name] = { revenue: 0, qty: 0 };
+                    byProduct[it.name].revenue += it.price * it.quantity;
+                    byProduct[it.name].qty += it.quantity;
+                }
+            }
+            var rows = Object.keys(byProduct).map(function (k) { return { label: k + ' (' + byProduct[k].qty + ' sold)', value: byProduct[k].revenue, display: fmtPrice(byProduct[k].revenue) }; });
+            rows.sort(function (a, b) { return b.value - a.value; });
+            renderBars('top-products', rows.slice(0, 5));
+        }
+
+        function renderStatusDistribution() {
+            var counts = {};
+            var orders = getOrders();
+            for (var i = 0; i < orders.length; i++) counts[orders[i].status] = (counts[orders[i].status] || 0) + 1;
+            var rows = Object.keys(counts).map(function (k) { return { label: k, value: counts[k] }; });
+            rows.sort(function (a, b) { return b.value - a.value; });
+            renderBars('status-chart', rows);
+        }
+
+        function renderCategoryRevenue() {
+            var orders = getOrders().filter(function (o) { return o.status !== 'Cancelled'; });
+            var products = getProducts();
+            var cats = getCategories();
+            var catBySlug = {}; for (var c = 0; c < cats.length; c++) catBySlug[cats[c].slug] = cats[c].name;
+            var prodById = {}; for (var p = 0; p < products.length; p++) prodById[products[p].id] = products[p];
+            var totals = {};
+            for (var i = 0; i < orders.length; i++) {
+                for (var j = 0; j < orders[i].items.length; j++) {
+                    var it = orders[i].items[j];
+                    var prod = prodById[it.id];
+                    var slug = prod ? prod.category : 'unknown';
+                    totals[slug] = (totals[slug] || 0) + it.price * it.quantity;
+                }
+            }
+            var rows = Object.keys(totals).map(function (slug) { return { label: catBySlug[slug] || slug, value: totals[slug], display: fmtPrice(totals[slug]) }; });
+            rows.sort(function (a, b) { return b.value - a.value; });
+            renderBars('category-chart', rows);
+        }
+
+        renderMetrics();
+        renderSalesByMonth();
+        renderTopProducts();
+        renderStatusDistribution();
+        renderCategoryRevenue();
+    </script>
+</body>
+</html>

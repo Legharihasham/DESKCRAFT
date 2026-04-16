@@ -177,3 +177,13 @@ a {
 .qty-btn:hover {
     background-color: #e7e5e4;
 }
+
+/* cart drawer */
+.cart-drawer {
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.cart-drawer.open {
+    transform: translateX(0);
+}

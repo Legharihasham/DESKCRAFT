@@ -458,8 +458,103 @@ function getUrlParam(name) {
 // run on page load
 document.addEventListener('DOMContentLoaded', function () {
     updateCartCount();
+    initCartDrawer();
 });
 
+// cart drawer logic
+function initCartDrawer() {
+    var cartDrawerHTML = 
+    '<div id="cart-drawer-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[60]"></div>' +
+    '<div id="cart-drawer" class="cart-drawer fixed top-0 right-0 h-full w-80 sm:w-96 bg-white shadow-2xl z-[70] p-6 flex flex-col">' +
+        '<div class="flex items-center justify-between mb-6 pb-4 border-b border-stone-200">' +
+            '<h2 class="text-xl font-bold text-stone-900">Your Cart</h2>' +
+            '<button onclick="toggleCartDrawer()" class="text-stone-500 hover:text-stone-900">' +
+                '<i class="fa-solid fa-xmark fa-lg"></i>' +
+            '</button>' +
+        '</div>' +
+        '<div id="cart-drawer-items" class="flex-grow overflow-y-auto mb-6 pr-2">' +
+        '</div>' +
+        '<div class="border-t border-stone-200 pt-4 mt-auto">' +
+            '<div class="flex justify-between font-semibold text-lg mb-4 text-stone-900">' +
+                '<span>Subtotal</span>' +
+                '<span id="cart-drawer-subtotal">Rs. 0</span>' +
+            '</div>' +
+            '<a href="cart.html" class="block w-full bg-stone-100 text-stone-900 text-center py-3 rounded-lg mb-3 font-medium hover:bg-stone-200 transition-colors">View Full Cart</a>' +
+            '<a href="checkout.html" class="block w-full bg-amber-700 text-white text-center py-3 rounded-lg font-medium hover:bg-amber-800 transition-colors">Proceed to Checkout</a>' +
+        '</div>' +
+    '</div>';
+    document.body.insertAdjacentHTML('beforeend', cartDrawerHTML);
+
+    var cartLinks = document.querySelectorAll('a[href="cart.html"], a[href="/cart.html"]');
+    for (var i = 0; i < cartLinks.length; i++) {
+        var link = cartLinks[i];
+        if (link.closest('#cart-drawer')) continue;
+        link.addEventListener('click', function(e) {
+            if(window.location.pathname.indexOf('cart.html') !== -1 || window.location.pathname.indexOf('checkout.html') !== -1){
+                // On cart or checkout page, we allow standard behavior or open cart drawer?
+                // Let's just open the cart drawer as requested "Whenever we click"
+            }
+            e.preventDefault();
+            toggleCartDrawer();
+        });
+    }
+
+    var overlay = document.getElementById('cart-drawer-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', toggleCartDrawer);
+    }
+}
+
+function toggleCartDrawer() {
+    var drawer = document.getElementById('cart-drawer');
+    var overlay = document.getElementById('cart-drawer-overlay');
+    if (drawer && overlay) {
+        drawer.classList.toggle('open');
+        overlay.classList.toggle('hidden');
+        if (drawer.classList.contains('open')) {
+            renderCartDrawer();
+        }
+    }
+}
+
+function renderCartDrawer() {
+    var cart = getCart();
+    var container = document.getElementById('cart-drawer-items');
+    var subtotalEl = document.getElementById('cart-drawer-subtotal');
+    if (!container || !subtotalEl) return;
+
+    if (cart.length === 0) {
+        container.innerHTML = '<div class="text-center py-10 text-stone-500">Your cart is currently empty.</div>';
+        subtotalEl.innerText = 'Rs. 0';
+        return;
+    }
+
+    var html = '';
+    var subtotal = 0;
+    for (var i = 0; i < cart.length; i++) {
+        var item = cart[i];
+        subtotal += item.price * item.quantity;
+        html += 
+            '<div class="flex items-center gap-4 mb-4 pb-4 border-b border-stone-100">' +
+                '<img src="' + item.image + '" alt="' + item.name + '" class="w-16 h-16 object-cover rounded">' +
+                '<div class="flex-grow min-w-0">' +
+                    '<h4 class="text-sm font-semibold text-stone-800 truncate">' + item.name + '</h4>' +
+                    '<p class="text-xs text-stone-500 mb-1">Qty: ' + item.quantity + '</p>' +
+                    '<p class="text-sm font-medium text-stone-900">Rs. ' + (item.price * item.quantity).toLocaleString() + '</p>' +
+                '</div>' +
+                '<button onclick="removeFromCartDrawer(' + item.id + ')" class="text-stone-400 hover:text-red-500 transition-colors flex-shrink-0">' +
+                    '<i class="fa-solid fa-trash text-sm"></i>' +
+                '</button>' +
+            '</div>';
+    }
+    container.innerHTML = html;
+    subtotalEl.innerText = 'Rs. ' + subtotal.toLocaleString();
+}
+
+function removeFromCartDrawer(id) {
+    removeFromCart(id);
+    renderCartDrawer();
+}
 
 // Delete me 
 function calculateAggregate(e) {

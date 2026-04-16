@@ -465,10 +465,10 @@ document.addEventListener('DOMContentLoaded', function () {
 function initCartDrawer() {
     var cartDrawerHTML = 
     '<div id="cart-drawer-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[60]"></div>' +
-    '<div id="cart-drawer" class="cart-drawer fixed top-0 right-0 h-full w-80 sm:w-96 bg-white shadow-2xl z-[70] p-6 flex flex-col">' +
+    '<div id="cart-drawer" role="dialog" aria-modal="true" class="cart-drawer fixed top-0 right-0 h-full w-80 sm:w-96 bg-white shadow-2xl z-[70] p-6 flex flex-col">' +
         '<div class="flex items-center justify-between mb-6 pb-4 border-b border-stone-200">' +
             '<h2 class="text-xl font-bold text-stone-900">Your Cart</h2>' +
-            '<button onclick="toggleCartDrawer()" class="text-stone-500 hover:text-stone-900">' +
+            '<button onclick="toggleCartDrawer()" aria-label="Close cart" class="text-stone-500 hover:text-stone-900">' +
                 '<i class="fa-solid fa-xmark fa-lg"></i>' +
             '</button>' +
         '</div>' +
@@ -490,10 +490,6 @@ function initCartDrawer() {
         var link = cartLinks[i];
         if (link.closest('#cart-drawer')) continue;
         link.addEventListener('click', function(e) {
-            if(window.location.pathname.indexOf('cart.html') !== -1 || window.location.pathname.indexOf('checkout.html') !== -1){
-                // On cart or checkout page, we allow standard behavior or open cart drawer?
-                // Let's just open the cart drawer as requested "Whenever we click"
-            }
             e.preventDefault();
             toggleCartDrawer();
         });
@@ -523,31 +519,70 @@ function renderCartDrawer() {
     var subtotalEl = document.getElementById('cart-drawer-subtotal');
     if (!container || !subtotalEl) return;
 
+    container.textContent = '';
+    
     if (cart.length === 0) {
-        container.innerHTML = '<div class="text-center py-10 text-stone-500">Your cart is currently empty.</div>';
+        var emptyState = document.createElement('div');
+        emptyState.className = 'text-center py-10 text-stone-500';
+        emptyState.textContent = 'Your cart is currently empty.';
+        container.appendChild(emptyState);
         subtotalEl.innerText = 'Rs. 0';
         return;
     }
 
-    var html = '';
     var subtotal = 0;
     for (var i = 0; i < cart.length; i++) {
         var item = cart[i];
-        subtotal += item.price * item.quantity;
-        html += 
-            '<div class="flex items-center gap-4 mb-4 pb-4 border-b border-stone-100">' +
-                '<img src="' + item.image + '" alt="' + item.name + '" class="w-16 h-16 object-cover rounded">' +
-                '<div class="flex-grow min-w-0">' +
-                    '<h4 class="text-sm font-semibold text-stone-800 truncate">' + item.name + '</h4>' +
-                    '<p class="text-xs text-stone-500 mb-1">Qty: ' + item.quantity + '</p>' +
-                    '<p class="text-sm font-medium text-stone-900">Rs. ' + (item.price * item.quantity).toLocaleString() + '</p>' +
-                '</div>' +
-                '<button onclick="removeFromCartDrawer(' + item.id + ')" class="text-stone-400 hover:text-red-500 transition-colors flex-shrink-0">' +
-                    '<i class="fa-solid fa-trash text-sm"></i>' +
-                '</button>' +
-            '</div>';
+        var itemPrice = Number(item.price) || 0;
+        var itemQuantity = Number(item.quantity) || 0;
+        subtotal += itemPrice * itemQuantity;
+        
+        var row = document.createElement('div');
+        row.className = 'flex items-center gap-4 mb-4 pb-4 border-b border-stone-100';
+        
+        var image = document.createElement('img');
+        image.className = 'w-16 h-16 object-cover rounded';
+        image.src = typeof item.image === 'string' ? item.image : '';
+        image.alt = typeof item.name === 'string' ? item.name : '';
+        
+        var details = document.createElement('div');
+        details.className = 'flex-grow min-w-0';
+        
+        var title = document.createElement('h4');
+        title.className = 'text-sm font-semibold text-stone-800 truncate';
+        title.textContent = typeof item.name === 'string' ? item.name : '';
+        
+        var quantity = document.createElement('p');
+        quantity.className = 'text-xs text-stone-500 mb-1';
+        quantity.textContent = 'Qty: ' + itemQuantity;
+        
+        var price = document.createElement('p');
+        price.className = 'text-sm font-medium text-stone-900';
+        price.textContent = 'Rs. ' + (itemPrice * itemQuantity).toLocaleString();
+        
+        details.appendChild(title);
+        details.appendChild(quantity);
+        details.appendChild(price);
+        
+        var removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'text-stone-400 hover:text-red-500 transition-colors flex-shrink-0';
+        removeButton.addEventListener('click', (function (id) {
+            return function () {
+                removeFromCartDrawer(id);
+            };
+        })(item.id));
+        
+        var icon = document.createElement('i');
+        icon.className = 'fa-solid fa-trash text-sm';
+        removeButton.appendChild(icon);
+        
+        row.appendChild(image);
+        row.appendChild(details);
+        row.appendChild(removeButton);
+        container.appendChild(row);
     }
-    container.innerHTML = html;
+    
     subtotalEl.innerText = 'Rs. ' + subtotal.toLocaleString();
 }
 
